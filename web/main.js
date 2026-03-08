@@ -40,11 +40,22 @@ function wireEvents() {
   });
 }
 
-function handleGenerateClick() {
+async function handleGenerateClick() {
   const text = textInputEl.value;
   try {
     const svg = generate_qr_svg(text);
-    qrOutputEl.innerHTML = svg;
+    const pngDataUrl = await renderSvgAsPng(svg, 480);
+    const generatedImage = document.createElement("img");
+    generatedImage.src = pngDataUrl;
+    generatedImage.alt = "Generated QR code";
+    generatedImage.width = 480;
+    generatedImage.height = 480;
+    generatedImage.style.maxWidth = "100%";
+    generatedImage.style.height = "auto";
+    generatedImage.style.display = "block";
+    generatedImage.style.border = "1px solid #2b3140";
+    generatedImage.style.borderRadius = "8px";
+    qrOutputEl.replaceChildren(generatedImage);
     console.info("[qr-browser] QR generated");
   } catch (error) {
     qrOutputEl.textContent = "";
@@ -119,6 +130,41 @@ function formatBytes(bytes) {
   }
   const mb = kb / 1024;
   return `${mb.toFixed(2)} MB`;
+}
+
+async function renderSvgAsPng(svgMarkup, outputSizePx) {
+  const svgBlob = new Blob([svgMarkup], { type: "image/svg+xml;charset=utf-8" });
+  const svgUrl = URL.createObjectURL(svgBlob);
+
+  try {
+    const image = await loadImage(svgUrl);
+    const canvas = document.createElement("canvas");
+    canvas.width = outputSizePx;
+    canvas.height = outputSizePx;
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) {
+      throw new Error("Could not create canvas context.");
+    }
+
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, outputSizePx, outputSizePx);
+    ctx.drawImage(image, 0, 0, outputSizePx, outputSizePx);
+
+    return canvas.toDataURL("image/png");
+  } finally {
+    URL.revokeObjectURL(svgUrl);
+  }
+}
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error("Could not load SVG image."));
+    image.src = src;
+  });
 }
 
 bootstrap().catch((error) => {
