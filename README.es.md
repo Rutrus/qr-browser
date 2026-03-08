@@ -1,12 +1,12 @@
 # QR Browser (Rust + WASM)
 
-Minimal web app to:
+Aplicacion web mínima para:
 
-- Generate QR codes from text.
-- Read QR codes from pasted images (`Ctrl+V`) or uploaded files.
-- Run QR logic entirely in browser-side WASM (Rust).
+- Generar QR desde texto.
+- Leer QR desde imagen pegada (`Ctrl+V`) o archivo subido.
+- Ejecutar toda la lógica de QR dentro de WASM (Rust).
 
-## Requirements
+## Requisitos
 
 - Rust toolchain
 - `wasm-pack`
@@ -17,23 +17,23 @@ Minimal web app to:
 make build-wasm
 ```
 
-This generates artifacts in `web/pkg`.
+Esto genera los artefactos en `web/pkg`.
 
-## Run Locally
+## Ejecutar en local
 
 ```bash
 make serve
 ```
 
-Open:
+Abrir:
 
 - [http://localhost:8080](http://localhost:8080)
 
-## Deployed Web
+## Web desplegada
 
 - [https://rutrus.github.io/qr-browser/](https://rutrus.github.io/qr-browser/)
 
-## Unit Tests
+## Test unitarios
 
 ```bash
 cargo test
