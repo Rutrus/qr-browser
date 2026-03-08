@@ -51,8 +51,52 @@
         gap: 12px;
         flex-wrap: wrap;
       }
+      .advanced {
+        margin-top: 12px;
+        border: 1px solid #2b3140;
+        border-radius: 10px;
+        background: #11141b;
+        padding: 10px 12px;
+      }
+      .advanced summary {
+        cursor: pointer;
+        color: #cfd7ea;
+        user-select: none;
+      }
+      .advanced-grid {
+        margin-top: 10px;
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+      .advanced-field {
+        display: grid;
+        gap: 6px;
+      }
+      .advanced-field label {
+        font-size: 0.9rem;
+        color: #a8b2c7;
+      }
+      .advanced-actions {
+        margin-top: 10px;
+        display: flex;
+        justify-content: flex-start;
+      }
+      .advanced-hint {
+        margin: 0;
+        color: #9aa4bd;
+        font-size: 0.82rem;
+      }
       input[type="text"] {
         flex: 1 1 420px;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #41485a;
+        background: #0f1115;
+        color: #f8f9fb;
+      }
+      select,
+      input[type="number"] {
         padding: 10px;
         border-radius: 8px;
         border: 1px solid #41485a;
@@ -109,6 +153,12 @@
           width: min(86%, 300px);
         }
       }
+      #generateMeta {
+        margin-top: 8px;
+        color: #9aa4bd;
+        font-size: 0.9rem;
+        min-height: 1.2em;
+      }
       #dropZone {
         border: 2px dashed #4d5670;
         border-radius: 10px;
@@ -159,7 +209,43 @@
             <input id="textInput" type="text" placeholder="Type text to generate a QR code" />
             <button id="generateBtn" disabled>Generate</button>
           </div>
+          <details class="advanced">
+            <summary>Advanced</summary>
+            <div class="advanced-actions">
+              <button id="applyMinPresetBtn" type="button">Apply min-size preset</button>
+            </div>
+            <p class="advanced-hint">
+              Recommendations: PNG output, L redundancy, border 1, size around 128px.
+            </p>
+            <div class="advanced-grid">
+              <div class="advanced-field">
+                <label for="redundancySelect">Redundancy</label>
+                <select id="redundancySelect">
+                  <option value="L">L (Low)</option>
+                  <option value="M" selected>M (Medium)</option>
+                  <option value="Q">Q (Quartile)</option>
+                  <option value="H">H (High)</option>
+                </select>
+              </div>
+              <div class="advanced-field">
+                <label for="borderInput">Border</label>
+                <input id="borderInput" type="number" min="0" max="32" step="1" value="4" />
+              </div>
+              <div class="advanced-field">
+                <label for="formatSelect">Output format</label>
+                <select id="formatSelect">
+                  <option value="png" selected>PNG</option>
+                  <option value="svg">SVG</option>
+                </select>
+              </div>
+              <div class="advanced-field">
+                <label for="sizeInput">Output size (px)</label>
+                <input id="sizeInput" type="number" min="128" max="1024" step="16" value="400" />
+              </div>
+            </div>
+          </details>
           <div id="qrOutput"></div>
+          <div id="generateMeta"></div>
         </section>
 
         <section>

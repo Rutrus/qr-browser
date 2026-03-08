@@ -12,14 +12,27 @@ pub fn init() {
 
 #[wasm_bindgen]
 pub fn generate_qr_svg(text: &str) -> Result<String, JsValue> {
+    generate_qr_svg_advanced(text, "M", 4)
+}
+
+#[wasm_bindgen]
+pub fn generate_qr_svg_advanced(
+    text: &str,
+    redundancy: &str,
+    border: i32,
+) -> Result<String, JsValue> {
     if text.trim().is_empty() {
         return Err(JsValue::from_str("Text for QR generation cannot be empty."));
     }
+    if !(0..=32).contains(&border) {
+        return Err(JsValue::from_str("Border must be between 0 and 32."));
+    }
 
-    let qr = QrCode::encode_text(text, QrCodeEcc::Medium)
+    let ecc = parse_redundancy(redundancy)?;
+    let qr = QrCode::encode_text(text, ecc)
         .map_err(|err| JsValue::from_str(&format!("Could not generate QR: {err:?}")))?;
 
-    Ok(qr_to_svg(&qr, 4))
+    Ok(qr_to_svg(&qr, border))
 }
 
 #[wasm_bindgen]
@@ -91,6 +104,18 @@ fn qr_to_svg(qr: &QrCode, border: i32) -> String {
     svg
 }
 
+fn parse_redundancy(redundancy: &str) -> Result<QrCodeEcc, JsValue> {
+    match redundancy.trim().to_ascii_uppercase().as_str() {
+        "L" | "LOW" => Ok(QrCodeEcc::Low),
+        "M" | "MEDIUM" => Ok(QrCodeEcc::Medium),
+        "Q" | "QUARTILE" => Ok(QrCodeEcc::Quartile),
+        "H" | "HIGH" => Ok(QrCodeEcc::High),
+        _ => Err(JsValue::from_str(
+            "Invalid redundancy. Use one of: L, M, Q, H.",
+        )),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -108,5 +133,11 @@ mod tests {
         let svg = generate_qr_svg("hola").expect("Debe generar SVG");
         assert!(svg.contains("<svg"));
         assert!(svg.contains("</svg>"));
+    }
+
+    #[test]
+    fn genera_svg_avanzado_valido() {
+        let svg = generate_qr_svg_advanced("hola", "H", 2).expect("Debe generar SVG");
+        assert!(svg.contains("viewBox"));
     }
 }
