@@ -1,0 +1,24 @@
+---
+description: Buenas practicas Rust para WASM y pruebas unitarias
+globs: **/*.{rs,toml}
+alwaysApply: false
+---
+
+# Rust + WASM Standards
+
+- Priorizar funciones puras y pequenas para la logica reusable.
+- Validar entrada en funciones expuestas con `wasm_bindgen`.
+- Devolver errores explicitos (`Result<_, JsValue>`) con mensajes accionables.
+- Mantener la frontera JS <-> Rust fina: conversion de tipos en un solo lugar.
+
+## Testing
+
+- Crear tests unitarios en Rust para utilidades y validaciones.
+- Cubrir casos exitosos y de error en funciones de negocio.
+- Evitar depender del DOM en tests unitarios de Rust.
+
+## WASM Build
+
+- Compilar con `wasm-pack build --target web --release --out-dir web/pkg`.
+- Exponer API minima necesaria con `#[wasm_bindgen]`.
+- No incluir logica duplicada en JavaScript si ya existe en Rust.

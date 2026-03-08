@@ -1,0 +1,13 @@
+[package]
+name = "qr_browser"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+console_error_panic_hook = "0.1.7"
+qrcodegen = "1.8.0"
+quircs = "0.10.3"
+wasm-bindgen = "0.2.114"
