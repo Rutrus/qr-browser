@@ -4,11 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="data:," />
-    <title>QR Browser WASM</title>
+    <title>QR Browser</title>
     <style>
       :root {
         color-scheme: dark;
         font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
       }
       body {
         margin: 0;
@@ -16,11 +19,22 @@
         color: #e7eaf0;
       }
       main {
-        max-width: 980px;
+        max-width: 1200px;
         margin: 0 auto;
         padding: 24px;
         display: grid;
+        gap: 16px;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 1fr;
         gap: 24px;
+      }
+      @media (min-width: 1080px) {
+        .layout {
+          grid-template-columns: 1fr 1fr;
+          align-items: start;
+        }
       }
       section {
         background: #171a21;
@@ -69,16 +83,31 @@
         cursor: not-allowed;
       }
       #qrOutput {
-        background: #fff;
+        background: #0f1115;
         padding: 10px;
         border-radius: 10px;
-        display: inline-flex;
+        display: flex;
         align-items: center;
         justify-content: center;
-        min-height: 500px;
-        min-width: 500px;
+        width: 100%;
+        min-height: 360px;
         max-width: 100%;
-        overflow: auto;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+      .generated-qr {
+        width: min(92%, 360px);
+        height: auto;
+        display: block;
+        background: #ffffff;
+        padding: 8px;
+        border: 1px solid #2b3140;
+        border-radius: 8px;
+      }
+      @media (min-width: 1080px) {
+        .generated-qr {
+          width: min(86%, 300px);
+        }
       }
       #dropZone {
         border: 2px dashed #4d5670;
@@ -122,30 +151,30 @@
   </head>
   <body>
     <main>
-      <h1>QR in Browser with WASM</h1>
+      <h1>QR Browser</h1>
+      <div class="layout">
+        <section>
+          <h2>Generate QR</h2>
+          <div class="row">
+            <input id="textInput" type="text" placeholder="Type text to generate a QR code" />
+            <button id="generateBtn" disabled>Generate</button>
+          </div>
+          <div id="qrOutput"></div>
+        </section>
 
-      <section>
-        <h2>Generate QR</h2>
-        <div class="row">
-          <input id="textInput" type="text" placeholder="Type text to generate a QR code" />
-          <button id="generateBtn" disabled>Generate</button>
-        </div>
-        <div id="qrOutput"></div>
-      </section>
-
-      <section>
-        <h2>Read QR (Ctrl+V or file upload)</h2>
-        <div class="row">
-          <input id="fileInput" type="file" accept="image/*" />
-        </div>
-        <div id="dropZone">Paste an image with Ctrl+V or drag a file here</div>
-        <div id="previewWrap">
-          <img id="previewImage" alt="QR image preview" />
-          <div id="previewMeta">No image loaded yet.</div>
-        </div>
-        <h3>Result</h3>
-        <div id="decodeResult" class="result">No results yet.</div>
-      </section>
+        <section>
+          <h2>Read QR</h2>
+          <div class="row">
+            <input id="fileInput" type="file" accept="image/*" />
+          </div>
+          <div id="dropZone" role="button" tabindex="0">Paste an image with Ctrl+V or drag a file here</div>
+          <div id="previewWrap">
+            <img id="previewImage" alt="QR image preview" />
+            <div id="previewMeta">No image loaded yet.</div>
+          </div>
+          <div id="decodeResult" class="result">No results yet.</div>
+        </section>
+      </div>
     </main>
 
     <script type="module" src="./main.js"></script>

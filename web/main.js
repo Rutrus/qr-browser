@@ -9,6 +9,7 @@ const decodeResultEl = document.getElementById("decodeResult");
 const previewImageEl = document.getElementById("previewImage");
 const previewMetaEl = document.getElementById("previewMeta");
 let previewUrl = null;
+const GENERATED_QR_SIZE = 400;
 
 async function bootstrap() {
   await init();
@@ -32,6 +33,13 @@ function wireEvents() {
     dropZoneEl.classList.add("active");
   });
   dropZoneEl.addEventListener("dragleave", () => dropZoneEl.classList.remove("active"));
+  dropZoneEl.addEventListener("click", () => fileInputEl.click());
+  dropZoneEl.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      fileInputEl.click();
+    }
+  });
   dropZoneEl.addEventListener("drop", async (event) => {
     event.preventDefault();
     dropZoneEl.classList.remove("active");
@@ -44,17 +52,11 @@ async function handleGenerateClick() {
   const text = textInputEl.value;
   try {
     const svg = generate_qr_svg(text);
-    const pngDataUrl = await renderSvgAsPng(svg, 480);
+    const pngDataUrl = await renderSvgAsPng(svg, GENERATED_QR_SIZE);
     const generatedImage = document.createElement("img");
     generatedImage.src = pngDataUrl;
     generatedImage.alt = "Generated QR code";
-    generatedImage.width = 480;
-    generatedImage.height = 480;
-    generatedImage.style.maxWidth = "100%";
-    generatedImage.style.height = "auto";
-    generatedImage.style.display = "block";
-    generatedImage.style.border = "1px solid #2b3140";
-    generatedImage.style.borderRadius = "8px";
+    generatedImage.className = "generated-qr";
     qrOutputEl.replaceChildren(generatedImage);
     console.info("[qr-browser] QR generated");
   } catch (error) {
